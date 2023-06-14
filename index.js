@@ -1,14 +1,11 @@
-// let address = process.argv[2];
-const fs = require('fs');
 const { loadPage } = require('./crawler');
 
 const {Queue} = require('./jsqueue');
 const { resetTable } = require('./database');
 
 let queue = new Queue();
-// let depth = 0;
 const maxDepth = process.argv[3];
-let breakTime = 1000;
+let breakTime = 5000;
 let emptyQueueCounter = 0;
 
 let counter = 0;
@@ -17,7 +14,6 @@ resetTable();
 
 loadPage(process.argv[2], 0, counter++, queue).then((response) => {
     let intervalID = setInterval(function() {
-        console.log(queue.peak());
         if(!queue.peak()){
             if(emptyQueueCounter<6){
                 setTimeout(() => {
