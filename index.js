@@ -8,29 +8,55 @@ const { resetTable } = require('./database');
 let queue = new Queue();
 // let depth = 0;
 const maxDepth = process.argv[3];
-// const breakTime = process.argv[4];
+let breakTime = 1000;
+let emptyQueueCounter = 0;
 
 let counter = 0;
 
-queue.enqueue();
-
 resetTable();
 
-loadPage(process.argv[2], 0, counter++, queue).then(async (response) => {
+loadPage(process.argv[2], 0, counter++, queue).then((response) => {
     let intervalID = setInterval(function() {
-        for(let i=0; i<5; i++){
-            const element = queue.dequeue();
-            if(element==undefined || queue.isEmpty() || element.depth == maxDepth) {
-                console.log("Crawler closed successfully");
-                clearInterval(intervalID);
+        console.log(queue.peak());
+        if(!queue.peak()){
+            if(emptyQueueCounter<6){
+                setTimeout(() => {
+                    for(let i=0; i<5; i++){
+                        const element = queue.dequeue();
+                        if(element==undefined || queue.isEmpty() || element.depth == maxDepth) {
+                            console.log("waiting...");
+                        }
+                        else{
+                            console.log(`\n\n[level ${element.depth}] Connecting to => ` + element.address);
+                            loadPage(element.address, element.depth, counter++, queue).then(async (res) => {
+                                }
+                            );
+                        }
+                    }
+                },10000);
+                emptyQueueCounter++;
             }
             else{
-                console.log(`\n\n[level ${element.depth}] Connecting to => ` + element.address);
-                loadPage(element.address, element.depth, counter++, queue).then(async (response) => {
-                    }
-                );
+                console.log("Empty queue! \nCrawler closed successfully...");
+                clearInterval(intervalID);
             }
+            
+        }else{
+            for(let i=0; i<5; i++){
+                const element = queue.dequeue();
+                if(element==undefined || queue.isEmpty() || element.depth == maxDepth) {
+                    console.log("Crawler closed successfully...");
+                    clearInterval(intervalID);
+                }
+                else{
+                    console.log(`\n\n[level ${element.depth}] Connecting to => ` + element.address);
+                    loadPage(element.address, element.depth, counter++, queue).then(async (res) => {
+                        }
+                    );
+                }
+            }
+            emptyQueueCounter = 0;
         }
-    },20000);
+    },breakTime);
 });
 

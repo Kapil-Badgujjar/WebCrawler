@@ -6,6 +6,8 @@ async function loadPage(url, depth, counter, queue) {
     try{
         const {data} = await axios.get(url,{Credential:true});
         if(data){
+            getLinksFromHTML(url, data, depth+1, queue);
+            console.log("Links added to queue...");
             const filename = `htmlCodeFile${counter}.html`;
             if(!fs.existsSync(`./files/depth-${depth}`)){
                 fs.mkdir(`./files/depth-${depth}`,(error) => {
@@ -25,8 +27,6 @@ async function loadPage(url, depth, counter, queue) {
                     }
                 });
             }
-            getLinksFromHTML(url, data, depth+1, queue);
-            console.log("Links added to queue...");
             addURLToTable(url,filename,depth);
             return true;
         }
