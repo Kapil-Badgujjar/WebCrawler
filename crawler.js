@@ -27,7 +27,7 @@ async function loadPage(url, depth, counter, queue) {
                     }
                 });
             }
-            // addURLToTable(url,filename,depth);
+            addURLToTable(url,filename,depth);
             return true;
         }
     }catch (error){

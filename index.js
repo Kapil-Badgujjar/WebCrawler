@@ -1,30 +1,47 @@
+const prompt = require('prompt-sync')({sigint: true});
 const fs = require('fs');
-
 const {Queue} = require('./jsqueue');
 const { loadPage } = require('./crawler');
 const { resetTable } = require('./database');
 
 let queue = new Queue();
-let address;
-if(process.argv[3] == undefined) {
-    const queueRestore = (JSON.parse(fs.readFileSync('./queueData.json', 'utf8')));
+let root = {};
+let maxDepth = 5 ;
+let emptyQueueCounter = 0;
+let counter = 0;
+let queueRestore = fs.readFileSync('./queueData.json', 'utf8');
+
+if(queueRestore.length > 0){
+    queueRestore = JSON.parse(queueRestore);
     queue.elements = queueRestore.elements;
     queue.head = queueRestore.head;
     queue.tail = queueRestore.tail;
-    root = queue.dequeue();
+    let flag = 'Y';
+    do{
+        flag = prompt('Press Y to continue last session/Press N to start with new session (Y/N) : ');
+        if(flag === 'Y' || flag === 'y'){
+            root = queue.dequeue();
+            break;
+        }else if(flag === 'N' || flag === 'n'){
+            root.address = prompt('Enter URL : ');
+            root.depth = 0;
+            maxDepth = Number(prompt('Max depth : '));
+            resetTable();
+            break;
+        }
+        else{
+            console.log('Please enter correct choice!')
+        }
+    }while(flag != 'Y' || flag != 'y'||flag != 'N' || flag != 'n');
+
 }
 else{
-    root= {
-        address : process.argv[3],
-        depth : 0
-    }
+    root.address = prompt('Enter URL : ');
+    root.depth = 0;
+    maxDepth = Number(prompt('Max depth : '));
+    resetTable();
 }
-const maxDepth = process.argv[2] ? process.argv[2] : 5 ;
-let emptyQueueCounter = 0;
 
-let counter = 0;
-
-resetTable();
 
 function caller( breakTime){
     let intervalID = setInterval(function() {
@@ -137,7 +154,5 @@ loadPage(root.address, root.depth, counter++, queue).then((response) => {
             fs.writeFile('./queueData.json', backupQueue,()=>{});
             emptyQueueCounter = 0;
         }
-        // caller(60000);
-        // console.log(queue);
+        caller(60000);
 });
-
