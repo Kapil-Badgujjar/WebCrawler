@@ -17,11 +17,13 @@ function getLinksFromHTML(url, file, depth, queue){
                     temp += file[i];
                     i++;
                 }
-                if(temp.slice(0,4)!='http'){
-                    if(q.host.slice(0,9)=='localhost'){
-                        temp = 'http://' + q.host + temp;
-                    }else{
-                        temp = url.slice(0,8) + q.host + temp;
+                if(temp.slice(0,5) !='https'){
+                    if(temp.slice(0,4) != 'http'){
+                        if(q.host.slice(0,9)=='localhost'||q.host.slice(0,9)=='127.0.0.1'){
+                            temp = 'http://' + q.host + temp;
+                        }else{
+                            temp = 'https://' + q.host + temp;
+                        }
                     }
                 }
                 fs.writeFile(`./URLs/depth-${depth}.text`,(JSON.stringify(temp)+'\n'),{ flag: 'a+'},function(err){
