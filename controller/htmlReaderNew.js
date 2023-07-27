@@ -59,8 +59,8 @@ function getLinksFromHTML(url, file, depth, queue, history){
 
                             //Add to history
                             history.push(temp);
-                            fs.writeFile('../../restoreLastSession/historyRestore.json', JSON.stringify({array: history}),(error)=>{
-                                if(error) console.log('History not saved');
+                            fs.writeFile(__dirname+'../../restoreLastSession/historyRestore.json', JSON.stringify({array: history}),(error)=>{
+                                if(error) console.log('History restore not saved');
                             });
                         }
                     }

@@ -201,7 +201,7 @@ let crawlerID = setInterval(function(){
             }
             else{
                 waitingQueue.enqueue(root);
-                fs.writeFile('./restoreLastSession/waitingQueueRestore.json', JSON.stringify(waitingQueue),(queue)=>{ if(error) console.log('waiting queue not saved!')});
+                fs.writeFile('./restoreLastSession/waitingQueueRestore.json', JSON.stringify(waitingQueue),(error)=>{ if(error) console.log('waiting queue not saved!')});
             }
             fs.writeFile('./restoreLastSession/queueRestore.json', JSON.stringify(queue),(error)=>{ if(error) console.log('Queue data not saved!');});
             // isTesting ? console.log(root.address, root.depth, isTesting, sessionID) : console.log(root.address, root.depth);
