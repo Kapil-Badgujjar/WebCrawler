@@ -26,8 +26,32 @@ class Queue{
         return this.tail -  this.head;
     }
     isEmpty(){
-        return this.length === 0;
+        return this.length == 0;
     }
 }
 
-module.exports = {Queue};
+class Stack{
+    constructor(){
+        this.elements={};
+        this.point=-1;
+    }
+    push(element){
+        this.elements[++this.point]=element;
+    }
+    pop(){
+        let element = this.elements[this.point];
+        delete this.elements[this.point--];
+        return element;
+    }
+    top(){
+        return this.elements[this.point];
+    }
+    isEmpty(){
+        return this.point==-1;
+    }
+    size(){
+        return this.point;
+    }
+}
+
+module.exports = {Queue, Stack};
